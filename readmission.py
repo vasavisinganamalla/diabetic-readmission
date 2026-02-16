@@ -299,7 +299,6 @@ print(" Model and preprocessing tools saved.")
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 
 y_pred = model.predict(X_test)
-
 print("\n Model Performance:")
 print(f"Accuracy: {accuracy_score(y_test, y_pred):.4f}")
 precision = precision_score(y_test, y_pred, zero_division=1)
