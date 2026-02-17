@@ -1,40 +1,13 @@
-#Loading libraries
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.ensemble import RandomForestClassifier
-from pathlib import Path
+from IPython.display import display
 
-# Provide a safe `display()` fallback for non-notebook execution
-try:
-    from IPython.display import display
-except Exception:
-    def display(obj):
-        print(obj)
-
-#loading Dataset: try expected filenames and fallback to the single CSV in the project
-data_filenames = ["disease_data.csv", "diabetic_data.csv"]
-project_dir = Path(__file__).parent
-csv_path = None
-for name in data_filenames:
-    candidate = project_dir / name
-    if candidate.exists():
-        csv_path = candidate
-        break
-if csv_path is None:
-    csvs = list(project_dir.glob("*.csv"))
-    if len(csvs) == 1:
-        csv_path = csvs[0]
-    elif len(csvs) > 1:
-        names = ", ".join([p.name for p in csvs])
-        raise FileNotFoundError(f"None of {data_filenames} found. Multiple CSVs in {project_dir}: {names}. Please specify the correct filename.")
-    else:
-        raise FileNotFoundError(f"None of {data_filenames} found and no CSVs in {project_dir}. Please add the dataset file.")
-
-df = pd.read_csv(csv_path)
-
+#loading Dataset
+df = pd.read_csv("diabetic_data.csv")
 df.head(10).T
 df.shape
 df.nunique()
