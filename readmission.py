@@ -6,21 +6,25 @@ from IPython.display import display
 
 #loading Dataset
 df = pd.read_csv("diabetic_data.csv")
+
 # Quick overview of dataset structure
 df.head(10).T
 df.shape
 df.nunique()
+
 #features in particular column
 # Check distribution of target variable
 print("\nReadmission Counts:")
 display(df['readmitted'].value_counts())
 print("\nReadmission Percentage:")
 print(df['readmitted'].value_counts(normalize=True)*100)
+
 #visualization of target variable
 plt.figure(figsize=(5,4))
 sns.countplot(x='readmitted', data=df)
 plt.title("Readmission Count (0 = No, 1 = Yes)")
 plt.show()
+
 #correlation matrix
 # Select only numeric columns for correlation calculation
 numeric_df = df.select_dtypes(include=np.number)
@@ -33,6 +37,7 @@ plt.figure(figsize=(12,8))
 sns.heatmap(correlation_matrix, cmap='coolwarm', annot=False)
 plt.title("Correlation Heatmap (Numeric Columns Only)")
 plt.show()
+
 ## Age vs Readmission Distribution
 plt.figure(figsize=(15,4))
 sns.histplot(data=df, x='age', hue='readmitted', kde=True, multiple='stack')
@@ -42,31 +47,36 @@ plt.show()
 #data preprocessing
 # Find columns where every value is unique
 unique_cols = [col for col in df.columns if df[col].nunique() == len(df)]
-
 print("Unwanted (unique) columns:", unique_cols)
+
 #constant or repeated same values in row
 constant_cols = [col for col in df.columns if df[col].nunique() == 1]
 print("Unwanted (constant) columns:", constant_cols)
+
 # Find columns with more than 40% missing values
 missing_cols = [col for col in df.columns if df[col].isnull().mean() > 0.4]
 print("Columns with too many missing values:", missing_cols)
+
 # Drop them
 df = df.drop(unique_cols + constant_cols + missing_cols, axis=1)
+
 # Safely combine and drop
 to_drop = list(set(unique_cols + constant_cols + missing_cols))
 df.drop(columns=to_drop, inplace=True, errors='ignore')
-
 print(f"Dropped {len(to_drop)} columns")
 print("New dataset shape:", df.shape)
 print("Remaining columns:", len(df.columns))
 print("Remaining rows:", len(df))
 print("Total missing values after cleanup:")
 print(df.isnull().sum())
+
 #sum of duplicates
 df.T.duplicated().sum()
+
 #Handle Missing Values Automatically
 num_cols = df.select_dtypes(include=['int64', 'float64']).columns
 cat_cols = df.select_dtypes(include=['object']).columns
+
 # Fill numeric columns with median
 for col in num_cols:
     df[col] = df[col].fillna(df[col].median())
@@ -74,9 +84,9 @@ for col in num_cols:
 # Fill categorical columns with mode (most frequent value)
 for col in cat_cols:
     df[col] = df[col].fillna(df[col].mode()[0])
-
 print("missing values filled")
 print("\nFinal shape after preprocessing:", df.shape)
+
 # List of columns you want to keep
 selected_cols = [
     'race', 'gender', 'age', 'time_in_hospital',
@@ -92,6 +102,7 @@ print(df.columns)
 # Find columns to drop (everything not in selected list)
 df = df[selected_cols].copy()
 print("Selected Features Shape:", df.shape)
+
 # Convert target variable to binary
 # 1 → readmitted within 30 days, 0 → not readmitted or >30
 df['readmitted'] = df['readmitted'].map({
@@ -99,13 +110,13 @@ df['readmitted'] = df['readmitted'].map({
     '>30': 0,
     'NO': 0
 })
-
 print("Target distribution AFTER conversion:")
 print(df['readmitted'].value_counts())
 
 sns.countplot(x='readmitted', data=df)
 plt.title("Final Target Distribution")
 plt.show()
+
 # feature engineering.............................
 # Combine Visit Counts
 df['total_visits'] = df['number_outpatient'] + df['number_emergency'] + df['number_inpatient']
@@ -153,6 +164,7 @@ print(df.info())
 sns.countplot(x='readmitted', data=df)
 plt.title("Readmission Distribution After Cleaning")
 plt.show()
+
 #Prepare Data for Modeling
 X = df.drop('readmitted', axis=1)
 y = df['readmitted']
@@ -191,6 +203,7 @@ X_test.loc[:, numerical_cols] = scaler.transform(X_test[numerical_cols])
 
 print("y_train distribution BEFORE SMOTE:")
 print(y_train.value_counts())
+
 #smote 
 #Handle Class Imbalance using SMOTE
 # Train-Test Split FIRST (Very Important)
@@ -222,6 +235,7 @@ from sklearn.ensemble import GradientBoostingClassifier
 model = GradientBoostingClassifier(random_state=42)
 model.fit(X_train_res, y_train_res)
 print("Model trained.")
+
 # Model Evaluation
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 y_pred = model.predict(X_test)
