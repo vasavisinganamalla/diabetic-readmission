@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hospital Readmission Prediction</title>
+</head>
+<body>
+    <h2>Hospital Readmission Prediction</h2>
+
+    <form action="/predict" method="post">
+
+        Race:
+        <select name="race" required>
+            <option value="Caucasian">Caucasian</option>
+            <option value="AfricanAmerican">AfricanAmerican</option>
+            <option value="Asian">Asian</option>
+            <option value="Hispanic">Hispanic</option>
+            <option value="Other">Other</option>
+        </select><br><br>
+
+        Gender:
+        <select name="gender" required>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+        </select><br><br>
+
+        Age Group:
+        <select name="age_group" required>
+            <option value="0-10">0-10</option>
+            <option value="10-20">10-20</option>
+            <option value="20-30">20-30</option>
+            <option value="30-40">30-40</option>
+            <option value="40-50">40-50</option>
+            <option value="50-60">50-60</option>
+            <option value="60-70">60-70</option>
+            <option value="70-80">70-80</option>
+            <option value="80-90">80-90</option>
+            <option value="90-100">90-100</option>
+        </select><br><br>
+
+        Time in Hospital:
+        <input type="number" name="time_in_hospital" required><br><br>
+
+        Number of Lab Procedures:
+        <input type="number" name="num_lab_procedures" required><br><br>
+
+        Number of Procedures:
+        <input type="number" name="num_procedures" required><br><br>
+
+        Number of Medications:
+        <input type="number" name="num_medications" required><br><br>
+
+        Number of Outpatient Visits:
+        <input type="number" name="number_outpatient" required><br><br>
+
+        Number of Emergency Visits:
+        <input type="number" name="number_emergency" required><br><br>
+
+        Number of Inpatient Visits:
+        <input type="number" name="number_inpatient" required><br><br>
+
+        Total Visits:
+        <input type="number" name="total_visits" required><br><br>
+
+        Diagnosis 1:
+        <input type="text" name="diag_1" required><br><br>
+
+        Diagnosis 2:
+        <input type="text" name="diag_2" required><br><br>
+
+        Diagnosis 3:
+        <input type="text" name="diag_3" required><br><br>
+
+        Metformin:
+        <select name="metformin" required>
+            <option value="No">No</option>
+            <option value="Steady">Steady</option>
+            <option value="Up">Up</option>
+            <option value="Down">Down</option>
+        </select><br><br>
+
+        Insulin:
+        <select name="insulin" required>
+            <option value="No">No</option>
+            <option value="Steady">Steady</option>
+            <option value="Up">Up</option>
+            <option value="Down">Down</option>
+        </select><br><br>
+
+        Change:
+        <select name="change" required>
+            <option value="No">No</option>
+            <option value="Ch">Ch</option>
+        </select><br><br>
+
+        Diabetes Medication:
+        <select name="diabetesMed" required>
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
+        </select><br><br>
+
+        <input type="submit" value="Predict">
+    </form>
+
+    <h3>{{ prediction_text }}</h3>
+
+</body>
+</html>
