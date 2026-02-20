@@ -1,16 +1,18 @@
 # patient-readmission-project
+
 predicting readmissions of patients using ML and SMOTE
-Diabetic Readmission Prediction
+
+**Diabetic Readmission Prediction**
 
 Machine Learning model to predict hospital readmission risk for diabetic patients using structured clinical data.
 
-Overview
+**Overview**
 
 This project builds a binary classification model that predicts whether a diabetic patient will be readmitted within 30 days of discharge.
 
 Early prediction of readmission risk helps improve patient care and reduce hospital costs.
 
-Problem Type
+**Problem Type**
 
 Binary Classification
 
@@ -18,7 +20,7 @@ Binary Classification
 
 1 → Readmission
 
-Tech Stack
+**Tech Stack**
 
 Python
 
@@ -30,7 +32,7 @@ Scikit-learn
 
 Gradient Boosting Classifier
 
-Project Files
+**Project Files**
 
 diabetic_data.csv – Dataset
 
@@ -42,7 +44,7 @@ standard_scaler.pkl – Feature scaler
 
 readmission.py – Prediction script
 
-How to Run
+**How to Run**
 
 Clone the repository:
 
@@ -56,11 +58,12 @@ pip install pandas numpy scikit-learn
 Run the model:
 
 python readmission.py
-Model
+
+**Model**
 
 Gradient Boosting Classifier trained on patient demographic, clinical, and hospital visit features.
 
-Use Case
+**Use Case**
 
 Identify high-risk patients
 
