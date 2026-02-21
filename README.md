@@ -32,18 +32,6 @@ Scikit-learn
 
 Gradient Boosting Classifier
 
-**Project Files**
-
-diabetic_data.csv – Dataset
-
-gradient_boosting_model.pkl – Trained model
-
-ordinal_encoder.pkl – Categorical encoder
-
-standard_scaler.pkl – Feature scaler
-
-readmission.py – Prediction script
-
 **How to Run**
 
 Clone the repository:
