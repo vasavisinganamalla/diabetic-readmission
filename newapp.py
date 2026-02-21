@@ -1,22 +1,21 @@
 from flask import Flask, render_template, request
 import pandas as pd
-import pickle
 import joblib
 
 app = Flask(__name__)
 
-model = joblib.load("gradient_boosting_model.pkl")
-encoder = joblib.load("ordinal_encoder.pkl")
-scaler = joblib.load("standard_scaler.pkl")
+# Load trained model
+model = joblib.load("model.pkl")
+
 
 @app.route('/')
 def home():
     return render_template('index.html')
 
+
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
-        # Get form values
         data = {
             'race': request.form['race'],
             'gender': request.form['gender'],
@@ -40,25 +39,19 @@ def predict():
 
         input_df = pd.DataFrame([data])
 
-        # Apply encoder
-        categorical_cols = ['race', 'gender', 'age_group',
-                            'diag_1', 'diag_2', 'diag_3',
-                            'metformin', 'insulin', 'change', 'diabetesMed']
+        prediction = model.predict(input_df)[0]
+        probability = model.predict_proba(input_df)[0][1] * 100
 
-        input_df[categorical_cols] = encoder.transform(input_df[categorical_cols])
-
-        # Apply scaler
-        input_scaled = scaler.transform(input_df)
-
-        # Predict
-        prediction = model.predict(input_scaled)[0]
-
-        result = "Patient likely to be readmitted" if prediction == 1 else "Patient not likely to be readmitted"
+        if prediction == 1:
+            result = f" High Risk of Readmission ({probability:.2f}%)"
+        else:
+            result = f" Low Risk of Readmission ({probability:.2f}%)"
 
         return render_template('index.html', prediction_text=result)
 
     except Exception as e:
-        return render_template('index.html', prediction_text=str(e))
+        return render_template('index.html', prediction_text=f"Error: {str(e)}")
+
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -8,12 +8,19 @@ from sklearn.pipeline import Pipeline
 from sklearn.ensemble import GradientBoostingClassifier
 from imblearn.over_sampling import SMOTE
 
-# Load dataset
+# LOAD DATASET
+
 df = pd.read_csv("diabetic_data.csv")
 
-# Feature Engineering
-df['total_visits'] = df['number_outpatient'] + df['number_emergency'] + df['number_inpatient']
+# FEATURE ENGINEERING
+# Total visits
+df['total_visits'] = (
+    df['number_outpatient'] +
+    df['number_emergency'] +
+    df['number_inpatient']
+)
 
+# Age grouping
 def categorize_age(age):
     if age in ['[0-10)', '[10-20)', '[20-30)']:
         return 'Young'
@@ -25,7 +32,9 @@ def categorize_age(age):
 df['age_group'] = df['age'].apply(categorize_age)
 df.drop('age', axis=1, inplace=True)
 
-# Select Features
+# SELECT FEATURES
+
+
 features = [
     'race','gender','time_in_hospital','num_lab_procedures',
     'num_procedures','num_medications',
@@ -37,18 +46,27 @@ features = [
 
 df = df[features + ['readmitted']]
 
+# Target encoding
 df['readmitted'] = df['readmitted'].map({
     '<30':1,
     '>30':0,
     'NO':0
 })
 
+df = df.dropna(subset=['readmitted'])
+
 X = df.drop('readmitted', axis=1)
 y = df['readmitted']
+
+# TRAIN TEST SPLIT
+
 
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
 )
+
+# PREPROCESSING
+
 
 categorical_cols = X.select_dtypes(include='object').columns
 numerical_cols = X.select_dtypes(include=['int64','float64']).columns
@@ -58,18 +76,25 @@ preprocessor = ColumnTransformer([
     ('num', StandardScaler(), numerical_cols)
 ])
 
-pipeline = Pipeline([
-    ('preprocessor', preprocessor),
-    ('classifier', GradientBoostingClassifier(random_state=42))
-])
+# SMOTE + MODEL
 
-smote = SMOTE(random_state=42)
 
 X_train_processed = preprocessor.fit_transform(X_train)
+
+smote = SMOTE(random_state=42)
 X_train_res, y_train_res = smote.fit_resample(X_train_processed, y_train)
 
-pipeline.named_steps['classifier'].fit(X_train_res, y_train_res)
+model = GradientBoostingClassifier(random_state=42)
+model.fit(X_train_res, y_train_res)
 
-joblib.dump(pipeline, "model.pkl")
+# FINAL PIPELINE
 
-print(" Model saved as model.pkl successfully!")
+final_pipeline = Pipeline([
+    ('preprocessor', preprocessor),
+    ('classifier', model)
+])
+
+# Save model
+joblib.dump(final_pipeline, "model.pkl")
+
+print("✅ Model saved as model.pkl successfully!")
