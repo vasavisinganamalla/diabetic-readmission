@@ -7,51 +7,71 @@ app = Flask(__name__)
 # Load trained model
 model = joblib.load("model.pkl")
 
-
-@app.route('/')
+@app.route("/")
 def home():
-    return render_template('index.html')
+    return render_template("index.html")
 
-
-@app.route('/predict', methods=['POST'])
+@app.route("/predict", methods=["POST"])
 def predict():
-    try:
-        data = {
-            'race': request.form['race'],
-            'gender': request.form['gender'],
-            'age_group': request.form['age_group'],
-            'time_in_hospital': int(request.form['time_in_hospital']),
-            'num_lab_procedures': int(request.form['num_lab_procedures']),
-            'num_procedures': int(request.form['num_procedures']),
-            'num_medications': int(request.form['num_medications']),
-            'number_outpatient': int(request.form['number_outpatient']),
-            'number_emergency': int(request.form['number_emergency']),
-            'number_inpatient': int(request.form['number_inpatient']),
-            'total_visits': int(request.form['total_visits']),
-            'diag_1': request.form['diag_1'],
-            'diag_2': request.form['diag_2'],
-            'diag_3': request.form['diag_3'],
-            'metformin': request.form['metformin'],
-            'insulin': request.form['insulin'],
-            'change': request.form['change'],
-            'diabetesMed': request.form['diabetesMed']
-        }
 
-        input_df = pd.DataFrame([data])
+    # Collect form data
+    input_data = {
+        'race': request.form['race'],
+        'gender': request.form['gender'],
+        'time_in_hospital': int(request.form['time_in_hospital']),
+        'num_lab_procedures': int(request.form['num_lab_procedures']),
+        'num_procedures': int(request.form['num_procedures']),
+        'num_medications': int(request.form['num_medications']),
+        'number_outpatient': int(request.form['number_outpatient']),
+        'number_emergency': int(request.form['number_emergency']),
+        'number_inpatient': int(request.form['number_inpatient']),
+        'diag_1': request.form['diag_1'],
+        'diag_2': request.form['diag_2'],
+        'diag_3': request.form['diag_3'],
+        'metformin': request.form['metformin'],
+        'insulin': request.form['insulin'],
+        'change': request.form['change'],
+        'diabetesMed': request.form['diabetesMed'],
+        'age_group': request.form['age_group']
+    }
 
-        prediction = model.predict(input_df)[0]
-        probability = model.predict_proba(input_df)[0][1] * 100
+    # Create total_visits
+    input_data['total_visits'] = (
+        input_data['number_outpatient'] +
+        input_data['number_emergency'] +
+        input_data['number_inpatient']
+    )
 
-        if prediction == 1:
-            result = f" High Risk of Readmission ({probability:.2f}%)"
-        else:
-            result = f" Low Risk of Readmission ({probability:.2f}%)"
+    # Convert to DataFrame
+    input_df = pd.DataFrame([input_data])
 
-        return render_template('index.html', prediction_text=result)
+    # Predict probability
+    probability = model.predict_proba(input_df)[0][1]
+    probability_percent = round(probability * 100, 2)
 
-    except Exception as e:
-        return render_template('index.html', prediction_text=f"Error: {str(e)}")
+    # Risk categorization
+    if probability_percent < 30:
+        risk_level = "Very Low"
+        confidence = "High"
+    elif probability_percent < 50:
+        risk_level = "Low"
+        confidence = "Moderate"
+    elif probability_percent < 70:
+        risk_level = "Moderate"
+        confidence = "Moderate"
+    else:
+        risk_level = "High"
+        confidence = "High"
 
+    return render_template(
+        "index.html",
+        prediction_text=f"""
+        Prediction Result:<br>
+        Risk Level: {risk_level}<br>
+        Probability of Readmission: {probability_percent}%<br>
+        Model Confidence: {confidence}
+        """
+    )
 
 if __name__ == "__main__":
     app.run(debug=True)

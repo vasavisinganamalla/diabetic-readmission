@@ -2,106 +2,143 @@
 <html>
 <head>
     <title>Hospital Readmission Prediction</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-    <h2>Hospital Readmission Prediction</h2>
 
-    <form action="/predict" method="post">
+<body class="bg-light">
 
-        Race:
-        <select name="race" required>
-            <option value="Caucasian">Caucasian</option>
-            <option value="AfricanAmerican">AfricanAmerican</option>
-            <option value="Asian">Asian</option>
-            <option value="Hispanic">Hispanic</option>
-            <option value="Other">Other</option>
-        </select><br><br>
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Hospital Readmission Prediction</h2>
 
-        Gender:
-        <select name="gender" required>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-        </select><br><br>
+    <form action="/predict" method="post" class="card p-4 shadow">
 
-        Age Group:
-        <select name="age_group" required>
-            <option value="0-10">0-10</option>
-            <option value="10-20">10-20</option>
-            <option value="20-30">20-30</option>
-            <option value="30-40">30-40</option>
-            <option value="40-50">40-50</option>
-            <option value="50-60">50-60</option>
-            <option value="60-70">60-70</option>
-            <option value="70-80">70-80</option>
-            <option value="80-90">80-90</option>
-            <option value="90-100">90-100</option>
-        </select><br><br>
+        <div class="row mb-3">
+            <div class="col">
+                <label class="form-label">Race</label>
+                <select name="race" class="form-control" required>
+                    <option value="Caucasian">Caucasian</option>
+                    <option value="AfricanAmerican">AfricanAmerican</option>
+                    <option value="Asian">Asian</option>
+                    <option value="Hispanic">Hispanic</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
 
-        Time in Hospital:
-        <input type="number" name="time_in_hospital" required><br><br>
+            <div class="col">
+                <label class="form-label">Gender</label>
+                <select name="gender" class="form-control" required>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
+        </div>
 
-        Number of Lab Procedures:
-        <input type="number" name="num_lab_procedures" required><br><br>
+        <div class="mb-3">
+            <label class="form-label">Age Group</label>
+            <select name="age_group" class="form-control" required>
+                <option value="0-10">0-10</option>
+                <option value="10-20">10-20</option>
+                <option value="20-30">20-30</option>
+                <option value="30-40">30-40</option>
+                <option value="40-50">40-50</option>
+                <option value="50-60">50-60</option>
+                <option value="60-70">60-70</option>
+                <option value="70-80">70-80</option>
+                <option value="80-90">80-90</option>
+                <option value="90-100">90-100</option>
+            </select>
+        </div>
 
-        Number of Procedures:
-        <input type="number" name="num_procedures" required><br><br>
+        <!-- Numeric Inputs -->
+        {% set fields = [
+        ('time_in_hospital','Time in Hospital'),
+        ('num_lab_procedures','Number of Lab Procedures'),
+        ('num_procedures','Number of Procedures'),
+        ('num_medications','Number of Medications'),
+        ('number_outpatient','Number of Outpatient Visits'),
+        ('number_emergency','Number of Emergency Visits'),
+        ('number_inpatient','Number of Inpatient Visits'),
+        ('total_visits','Total Visits')
+        ] %}
 
-        Number of Medications:
-        <input type="number" name="num_medications" required><br><br>
+        {% for name,label in fields %}
+        <div class="mb-3">
+            <label class="form-label">{{ label }}</label>
+            <input type="number" name="{{ name }}" class="form-control" required>
+        </div>
+        {% endfor %}
 
-        Number of Outpatient Visits:
-        <input type="number" name="number_outpatient" required><br><br>
+        <!-- Diagnosis -->
+        <div class="mb-3">
+            <label class="form-label">Diagnosis 1</label>
+            <input type="text" name="diag_1" class="form-control" required>
+        </div>
 
-        Number of Emergency Visits:
-        <input type="number" name="number_emergency" required><br><br>
+        <div class="mb-3">
+            <label class="form-label">Diagnosis 2</label>
+            <input type="text" name="diag_2" class="form-control" required>
+        </div>
 
-        Number of Inpatient Visits:
-        <input type="number" name="number_inpatient" required><br><br>
+        <div class="mb-3">
+            <label class="form-label">Diagnosis 3</label>
+            <input type="text" name="diag_3" class="form-control" required>
+        </div>
 
-        Total Visits:
-        <input type="number" name="total_visits" required><br><br>
+        <!-- Medications -->
+        <div class="mb-3">
+            <label class="form-label">Metformin</label>
+            <select name="metformin" class="form-control">
+                <option value="No">No</option>
+                <option value="Steady">Steady</option>
+                <option value="Up">Up</option>
+                <option value="Down">Down</option>
+            </select>
+        </div>
 
-        Diagnosis 1:
-        <input type="text" name="diag_1" required><br><br>
+        <div class="mb-3">
+            <label class="form-label">Insulin</label>
+            <select name="insulin" class="form-control">
+                <option value="No">No</option>
+                <option value="Steady">Steady</option>
+                <option value="Up">Up</option>
+                <option value="Down">Down</option>
+            </select>
+        </div>
 
-        Diagnosis 2:
-        <input type="text" name="diag_2" required><br><br>
+        <div class="mb-3">
+            <label class="form-label">Change</label>
+            <select name="change" class="form-control">
+                <option value="No">No</option>
+                <option value="Ch">Ch</option>
+            </select>
+        </div>
 
-        Diagnosis 3:
-        <input type="text" name="diag_3" required><br><br>
+        <div class="mb-3">
+            <label class="form-label">Diabetes Medication</label>
+            <select name="diabetesMed" class="form-control">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+            </select>
+        </div>
 
-        Metformin:
-        <select name="metformin" required>
-            <option value="No">No</option>
-            <option value="Steady">Steady</option>
-            <option value="Up">Up</option>
-            <option value="Down">Down</option>
-        </select><br><br>
-
-        Insulin:
-        <select name="insulin" required>
-            <option value="No">No</option>
-            <option value="Steady">Steady</option>
-            <option value="Up">Up</option>
-            <option value="Down">Down</option>
-        </select><br><br>
-
-        Change:
-        <select name="change" required>
-            <option value="No">No</option>
-            <option value="Ch">Ch</option>
-        </select><br><br>
-
-        Diabetes Medication:
-        <select name="diabetesMed" required>
-            <option value="No">No</option>
-            <option value="Yes">Yes</option>
-        </select><br><br>
-
-        <input type="submit" value="Predict">
+        <button type="submit" class="btn btn-primary w-100">Predict</button>
     </form>
 
-    <h3>{{ prediction_text }}</h3>
+    {% if prediction_text %}
+    <div class="card mt-4 shadow">
+        <div class="card-body text-center">
+            {% if "Low" in prediction_text %}
+    <h3 class="text-success">{{ prediction_text | safe }}</h3>
+{% elif "Moderate" in prediction_text %}
+    <h3 class="text-warning">{{ prediction_text | safe }}</h3>
+{% else %}
+    <h3 class="text-danger">{{ prediction_text | safe }}</h3>
+{% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+</div>
 
 </body>
 </html>
