@@ -97,4 +97,4 @@ final_pipeline = Pipeline([
 # Save model
 joblib.dump(final_pipeline, "model.pkl")
 
-print("✅ Model saved as model.pkl successfully!")
+print("Model saved as model.pkl successfully!")
